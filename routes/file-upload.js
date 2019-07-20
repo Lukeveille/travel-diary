@@ -1,0 +1,13 @@
+import express from 'express';
+import upload from '../services/file-upload';
+
+const router = express.Router();
+const singleUpload = upload.single('image');
+
+router.post('/', (req, res) => {
+  singleUpload(req, res, err => {
+    return res.json({ imageUrl: req.file.location });
+  });
+});
+
+export default router;

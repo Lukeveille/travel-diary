@@ -1,8 +1,13 @@
 import express from "express";
+import fileUpload from './routes/file-upload';
 
 const app = express();
+const apiRouter = express.Router();
 
-app.get('/', (req, res) => {
+app.use('/api/v1', apiRouter);
+apiRouter.use('/file-upload', fileUpload);
+
+apiRouter.get('/', (req, res) => {
   res.send('<h1>Hello World</h1>');
 });
 
