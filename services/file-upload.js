@@ -6,7 +6,7 @@ aws.config.update({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   region: process.env.TRAVEL_DIARY_AWS_REGION
-})
+});
 
 const s3 = new aws.S3();
 
@@ -15,10 +15,10 @@ const upload = multer({
     s3: s3,
     bucket: process.env.TRAVEL_DIARY_AWS_BUCKET,
     metadata: (req, file, cb) => {
-      cb(null, {fieldName: file.fieldname});
+      cb(null, { fieldName: file.fieldname });
     },
     key: (req, file, cb) => {
-      cb(null, Date.now().toString())
+      cb(null, file.originalname);
     }
   })
 });
