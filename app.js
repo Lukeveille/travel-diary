@@ -1,13 +1,15 @@
 import express from "express";
+import bodyParser from 'body-parser';
 import fileUpload from './routes/file-upload';
 import userRouter from './routes/user';
 
 const app = express();
-const apiRouter = express.Router();
+app.use(bodyParser.json());
 
+const apiRouter = express.Router();
 app.use('/api/v1', apiRouter);
 apiRouter.use('/file-upload', fileUpload);
-apiRouter.use('/user', userRouter);
+apiRouter.use('/users', userRouter);
 
 apiRouter.get('/', (req, res) => {
   res.send('<h1>Hello World</h1>');

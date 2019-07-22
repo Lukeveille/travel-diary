@@ -1,5 +1,5 @@
 import express from 'express';
-import upload from '../services/file-upload';
+import upload from '../services/s3-upload';
 
 const router = express.Router();
 const singleUpload = upload.single('image');
