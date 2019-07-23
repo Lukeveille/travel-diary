@@ -43,7 +43,7 @@ router.post('/signup', (req, res) => {
     res.status(401).json({ error: 'Password required!' })
   } else {
     res.status(401).json({ error: 'Not a valid e-mail!' })
-  }
+  };
 });
 
 router.post('/login', (req, res) => {
@@ -57,13 +57,11 @@ router.post('/login', (req, res) => {
         if (err) {
           res.status(401).json({ error: "Password required" });
         } else if (result) {
-          const token = jwt.sign({
-            email: req.body.email
-          },
-          process.env.TRAVEL_DIARY_JWT_KEY,
-          {
-            expiresIn: '1h'
-          } )
+          const token = jwt.sign(
+            { email: req.body.email },
+            process.env.TRAVEL_DIARY_JWT_KEY,
+            { expiresIn: '1h' }
+          );
           res.status(201).json({
             message: "Login successful",
             token
@@ -76,8 +74,8 @@ router.post('/login', (req, res) => {
   });
 });
 
-router.delete('/', (req, res) => {
-  db.get({...params, Key: { email: req.body.email }}, (error, data) => {
+router.delete('/delete/:email', (req, res) => {
+  db.get({...params, Key: { email: req.params.email }}, (error, data) => {
     if (error) {
       res.status(500).json({ error });
     } else if (!data || data && Object.entries(data).length === 0) {
@@ -87,12 +85,12 @@ router.delete('/', (req, res) => {
         if (err) {
           res.status(401).json({ error: 'Password required' });
         } else if (result) {
-          db.delete({...params, Key: { email: req.body.email }}, (error, data) => {
+          db.delete({...params, Key: { email: req.params.email }}, (error, data) => {
             if (error) {
               res.status(500).json({ error });
             } else {
               res.status(201).json({
-                message: 'User with e-mail address ' + req.body.email + ' deleted'
+                message: 'User with e-mail address ' + req.params.email + ' deleted'
               });
             };
           });

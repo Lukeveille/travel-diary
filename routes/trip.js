@@ -1,26 +1,48 @@
 import express from 'express';
 import uuidv1 from 'uuid';
+import checkAuth from '../services/check-auth';
 import { db } from '../services/aws-config';
 
 const router = express.Router();
 
 const params = { TableName: 'trips' };
 
-router.post('/', (req, res) => {
+router.post('/', checkAuth, (req, res) => {
   const newTrip = {...params,
     Item: {
       id: uuidv1(),
-      user: req.body.email,
+      user: req.userData.email,
       start: req.body.start,
       end: req.body.end
     }
   }
-  db.put(newTrip, (error, data) => {
+  const userUpdate = {
+    TableName: 'users',
+    Key: { email: req.userData.email }
+  }
+
+  db.get(userUpdate, (error, data) => {
     if (error) {
       res.status(500).json({ error });
     } else {
-      res.status(201).json({
-        message: 'New trip created'
+      const tripList = data.Item.trips
+      tripList[0]? tripList.push(newTrip.Item.id) : triplist = [newTrip.Item.id]
+      userUpdate.ExpressionAttributeValues = { ':trips': tripList };
+      userUpdate.UpdateExpression = 'set trips = :trips';
+      db.update(userUpdate, err => {
+        if (err) {
+          res.status(500).json({ error: err });
+        } else {
+          db.put(newTrip, (error, data) => {
+            if (error) {
+              res.status(500).json({ error });
+            } else {
+              res.status(201).json({
+                message: 'New trip created'
+              });
+            };
+          });
+        }
       });
     };
   });
@@ -43,9 +65,10 @@ router.patch('/:id', (req, res) => {
     } else {
       const updates = {...params,
         Key: { email_id: req.params.id },
-        UpdateExpression: 'set username = :username',
+        UpdateExpression: 'set start = :start end = :end',
         ExpressionAttributeValues: {
-          ':username': req.body.username || data.Item.username
+          ':start': 123456,
+          ':end': 456789
         }
       };
       db.update(updates, (error, data) => {

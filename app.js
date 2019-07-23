@@ -9,8 +9,8 @@ app.use(bodyParser.json());
 
 const apiRouter = express.Router();
 app.use('/api/v1', apiRouter);
+apiRouter.use('/', userRouter);
 apiRouter.use('/file-upload', fileUpload);
-apiRouter.use('/users', userRouter);
 apiRouter.use('/trips', tripRouter);
 
 const port = process.env.PORT || 443;
