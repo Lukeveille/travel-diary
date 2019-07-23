@@ -9,30 +9,30 @@ const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}
 
 router.post('/signup', (req, res) => {
   if (!req.body.password) {
-    res.status(401).json({ error: 'Password required!' })
+    res.status(400).json({ error: 'Password required!' })
   } else if (!emailRegex.test(req.body.email)) {
-    res.status(401).json({ error: 'Not a valid e-mail!' })
+    res.status(400).json({ error: 'Not a valid e-mail!' })
   } else {
-    db.get({...params, Key: { primary: 'user', sort: req.body.email }}, (er, data) => {
+    db.get({...params, Key: { dataSource: 'user', dataKey: req.body.email }}, (er, data) => {
       if (er) {
-        res.status(500).json({ error: er });
+        res.status(502).json({ error: er });
       } else if (data && Object.entries(data).length > 0) {
-        res.status(500).json({ error: 'User already exists!' });
+        res.status(400).json({ error: 'User already exists!' });
       } else {
         bcrypt.hash(req.body.password, 10, (err, hash) => {
           if (err) {
-            res.status(500).json({ error: err});
+            res.status(502).json({ error: err});
           } else {
             const newUser = {...params,
               Item: {
-                primary: 'user',
-                sort: req.body.email,
+                dataSource: 'user',
+                dataKey: req.body.email,
                 password: hash
               }
             };
             db.put(newUser, (error, data) => {
               if (error) {
-                res.status(500).json({ error });
+                res.status(502).json({ error });
               } else {
                 res.status(201).json({
                   message: 'New user created with e-mail address ' + req.body.email
@@ -47,9 +47,9 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  db.get({...params, Key: { primary: 'user', sort: req.body.email }}, (error, data) => {
+  db.get({...params, Key: { dataSource: 'user', dataKey: req.body.email }}, (error, data) => {
     if (error) {
-      res.status(500).json({ error });
+      res.status(502).json({ error });
     } else if (!data || data && Object.entries(data).length === 0) {
       res.status(401).json({ error: 'Auth failed' });
     } else {
@@ -62,7 +62,7 @@ router.post('/login', (req, res) => {
             process.env.TRAVEL_DIARY_JWT_KEY,
             { expiresIn: '1h' }
           );
-          res.status(201).json({
+          res.status(202).json({
             message: "Login successful",
             token
           });
@@ -75,9 +75,9 @@ router.post('/login', (req, res) => {
 });
 
 router.delete('/delete/:email', (req, res) => {
-  db.get({...params, Key: { primary: 'user', sort: req.body.email }}, (error, data) => {
+  db.get({...params, Key: { dataSource: 'user', dataKey: req.body.email }}, (error, data) => {
     if (error) {
-      res.status(500).json({ error });
+      res.status(502).json({ error });
     } else if (!data || data && Object.entries(data).length === 0) {
       res.status(401).json({ error: 'Auth failed' });
     } else {
@@ -85,11 +85,11 @@ router.delete('/delete/:email', (req, res) => {
         if (err) {
           res.status(401).json({ error: 'Password required' });
         } else if (result) {
-          db.delete({...params, Key: { primary: 'user', sort: req.body.email }}, (error, data) => {
+          db.delete({...params, Key: { dataSource: 'user', dataKey: req.body.email }}, (error, data) => {
             if (error) {
-              res.status(500).json({ error });
+              res.status(502).json({ error });
             } else {
-              res.status(201).json({
+              res.status(202).json({
                 message: 'User with e-mail address ' + req.params.email + ' deleted'
               });
             };
