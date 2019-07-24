@@ -5,18 +5,11 @@ import checkTrip from '../services/check-trip';
 import checkEntry from '../services/check-entry';
 import checkString from '../services/check-string';
 import checkGeo from '../services/check-geo';
+import linkRegex from '../services/link-regex';
 import { db } from '../services/aws-config';
 
 const router = express.Router();
 const params = { TableName: 'trip-diary' };
-const linkRegex = new RegExp(
-  '^(https?:\\/\\/)?' +
-  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
-  '((\\d{1,3}\\.){3}\\d{1,3}))' +
-  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
-  '(\\?[;&a-z\\d%_.~+=-]*)?' +
-  '(\\#[-a-z\\d_]*)?$','i'
-)
 
 router.post('/:trip/new-entry', checkAuth, checkTrip, (req, res) => {
   const newEntry = {...params,
@@ -32,7 +25,7 @@ router.post('/:trip/new-entry', checkAuth, checkTrip, (req, res) => {
       geotag: checkGeo(req.body.geotag)
     }
   };
-  db.put(newEntry, (error, data) => {
+  db.put(newEntry, error => {
     if (error) {
       res.status(502).json({ error });
     } else {
@@ -84,7 +77,7 @@ router.patch('/:trip/:entry', checkAuth, checkTrip, checkEntry, (req, res) => {
           ':link': linkRegex.test(req.body.link)? req.body.link : data.Item.link,
           ':geotag': checkGeo(req.body.geotag, data.Item.geotag)
       };
-      db.update(updateParams, (error, data) => {
+      db.update(updateParams, error => {
         if (error) {
           res.status(502).json({ error });
         } else {

@@ -12,10 +12,10 @@ app.use(bodyParser.json());
 const apiRouter = express.Router();
 app.use('/api/v1', apiRouter);
 
+apiRouter.use('/', mediaRouter);
 apiRouter.use('/', userRouter);
 apiRouter.use('/', entryRouter);
 apiRouter.use('/', tripRouter);
-apiRouter.use('/', mediaRouter);
 apiRouter.use('/file-upload', fileUpload);
 
 const port = process.env.PORT || 443;

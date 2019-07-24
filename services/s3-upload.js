@@ -7,9 +7,10 @@ const upload = multer({
     s3: s3,
     bucket: process.env.TRAVEL_DIARY_AWS_BUCKET,
     metadata: (req, file, cb) => {
-      cb(null, { fieldName: file.fieldname });
+      cb(null, { fieldName: 'testing'});
     },
     key: (req, file, cb) => {
+      console.log(file)
       cb(null, file.originalname);
     }
   })
