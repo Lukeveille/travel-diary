@@ -11,7 +11,8 @@ import { db } from '../services/aws-config';
 
 const router = express.Router();
 const params = { TableName: 'trip-diary' };
-const singleUpload = upload.single('image');
+const singleUpload = upload.any();
+// const formData = upload.any('image');
 
 // router.post('/:trip/:entry/new-media', checkAuth, checkTrip, checkEntry, (req, res) => {
 router.post('/:trip/:entry/new-media', (req, res) => {
@@ -27,9 +28,14 @@ router.post('/:trip/:entry/new-media', (req, res) => {
   //     geotag: checkGeo(req.body.geotag)
   //   }
   // }
-  console.log(req)
+  // formData(req, res, next => {
+  //   console.log(req.files)
+  //   res.status(200).json({hey: 'hi'})
+  // });
+  
   singleUpload(req, res, next => {
-    return res.json({ imageUrl: "111" });
+    // checkAuth(req, res, next);
+    res.json({...req.body, imageUrl: req.files[0].location });
   })
   // db.put(media, error => {
   //   if (error) {

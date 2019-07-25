@@ -10,8 +10,8 @@ const upload = multer({
       cb(null, { fieldName: 'testing'});
     },
     key: (req, file, cb) => {
-      console.log(file)
-      cb(null, file.originalname);
+      // console.log(file)
+      cb(null, file.originalname.toString());
     }
   })
 });
