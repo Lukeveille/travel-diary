@@ -1,21 +1,23 @@
 import express from 'express';
-import uuidv1 from 'uuid';
+// import uuidv1 from 'uuid';
 import upload from '../services/s3-upload';
 import checkAuth from '../services/check-auth';
-import checkTrip from '../services/check-trip';
-import checkEntry from '../services/check-entry';
-import checkString from '../services/check-string';
-import checkGeo from '../services/check-geo';
-import linkRegex from '../services/link-regex';
-import { db } from '../services/aws-config';
+import multer from 'multer';
+// import checkTrip from '../services/check-trip';
+// import checkEntry from '../services/check-entry';
+// import checkString from '../services/check-string';
+// import checkGeo from '../services/check-geo';
+// import linkRegex from '../services/link-regex';
+// import { db } from '../services/aws-config';
 
 const router = express.Router();
 const params = { TableName: 'trip-diary' };
-const singleUpload = upload.any();
-// const formData = upload.any('image');
+const formData = upload.fields([{name: 'title'}]);
+const singleUpload = upload.single('image');
 
 // router.post('/:trip/:entry/new-media', checkAuth, checkTrip, checkEntry, (req, res) => {
-router.post('/:trip/:entry/new-media', (req, res) => {
+router.post('/:trip/:entry/new-media', formData, (req, res) => {
+  res.json(req.body);
   // const media = {...params,
   //   Item: {
   //     created: Date.now(),
@@ -32,11 +34,6 @@ router.post('/:trip/:entry/new-media', (req, res) => {
   //   console.log(req.files)
   //   res.status(200).json({hey: 'hi'})
   // });
-  
-  singleUpload(req, res, next => {
-    // checkAuth(req, res, next);
-    res.json({...req.body, imageUrl: req.files[0].location });
-  })
   // db.put(media, error => {
   //   if (error) {
   //     res.status(502).json({ error });
