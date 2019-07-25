@@ -1,7 +1,7 @@
 import express from 'express';
 import uuidv1 from 'uuid';
-import checkAuth from '../services/check-auth';
-import checkTrip from '../services/check-trip';
+import checkAuth from '../middleware/check-auth';
+import checkTrip from '../middleware/check-trip';
 import { db } from '../services/aws-config';
 
 const router = express.Router();
@@ -38,7 +38,7 @@ router.get('/trips', checkAuth, (req, res) => {
     if (error) {
       res.status(502).json({ error });
     } else {
-      res.status(200).json(data.Items);
+      res.json(data.Items);
     };
   });
 });
@@ -48,7 +48,7 @@ router.get('/:trip', checkAuth, checkTrip, (req, res) => {
     if (error) {
       res.status(500).json({ error });
     } else {
-      res.status(200).json(data.Item);
+      res.json(data.Item);
     };
   });
 });

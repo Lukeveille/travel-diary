@@ -1,10 +1,10 @@
 import express from 'express';
 import uuidv1 from 'uuid';
-import checkAuth from '../services/check-auth';
-import checkTrip from '../services/check-trip';
-import checkEntry from '../services/check-entry';
-import checkString from '../services/check-string';
-import checkGeo from '../services/check-geo';
+import checkAuth from '../middleware/check-auth';
+import checkTrip from '../middleware/check-trip';
+import checkEntry from '../middleware/check-entry';
+import checkString from '../middleware/check-string';
+import checkGeo from '../middleware/check-geo';
 import linkRegex from '../services/link-regex';
 import { db } from '../services/aws-config';
 
@@ -46,7 +46,7 @@ router.get('/:trip/entries', checkAuth, checkTrip, (req, res) => {
     if (error) {
       res.status(502).json({ error });
     } else {
-      res.status(200).json(data.Items);
+      res.json(data.Items);
     };
   });
 });
@@ -56,7 +56,7 @@ router.get('/:trip/:entry', checkAuth, checkTrip, checkEntry, (req, res) => {
     if (error) {
       res.status(502).json({ error });
     } else {
-      res.status(200).json(data.Item);
+      res.json(data.Item);
     };
   });
 });

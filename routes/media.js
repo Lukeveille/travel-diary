@@ -1,48 +1,52 @@
 import express from 'express';
-// import uuidv1 from 'uuid';
+import uuidv1 from 'uuid';
 import upload from '../services/s3-upload';
-import checkAuth from '../services/check-auth';
-import multer from 'multer';
-// import checkTrip from '../services/check-trip';
-// import checkEntry from '../services/check-entry';
-// import checkString from '../services/check-string';
-// import checkGeo from '../services/check-geo';
-// import linkRegex from '../services/link-regex';
-// import { db } from '../services/aws-config';
+import checkAuth from '../middleware/check-auth';
+import checkTrip from '../middleware/check-trip';
+import checkEntry from '../middleware/check-entry';
+import checkString from '../middleware/check-string';
+import checkGeo from '../middleware/check-geo';
+import { db } from '../services/aws-config';
 
 const router = express.Router();
 const params = { TableName: 'trip-diary' };
-const formData = upload.fields([{name: 'title'}]);
-const singleUpload = upload.single('image');
+const singleUpload = upload.any();
 
-// router.post('/:trip/:entry/new-media', checkAuth, checkTrip, checkEntry, (req, res) => {
-router.post('/:trip/:entry/new-media', formData, (req, res) => {
-  res.json(req.body);
-  // const media = {...params,
-  //   Item: {
-  //     created: Date.now(),
-  //     dataKey: 'media-' + uuidv1().slice(0, 8),
-  //     dataSource: req.params.entry,
-  //     link: linkRegex.test(req.body.link)? req.body.link : null,
-  //     user: req.userData.email,
-  //     filename: req.body.filename || null,
-  //     title: checkString(req.body.title),
-  //     geotag: checkGeo(req.body.geotag)
-  //   }
-  // }
-  // formData(req, res, next => {
-  //   console.log(req.files)
-  //   res.status(200).json({hey: 'hi'})
-  // });
-  // db.put(media, error => {
-  //   if (error) {
-  //     res.status(502).json({ error });
-  //   } else {
-  //     res.status(201).json({
-  //       message: 'New media saved with id ' + media.Item.dataKey
-  //     });
-  //   };
-  // });
+const checkFile = (req, res, next) => {
+  if (req.files[0]) {   
+    next()
+  } else {
+    res.status(400).json({ error: 'You must attach a file' })
+  }
+};
+
+router.post('/:trip/:entry/new-media', checkAuth, checkTrip, checkEntry, singleUpload, checkFile, (req, res) => {
+  const mediaLink = req.files[0].location.replace(
+    'https://travel-diary.s3.us-east-2.amazonaws.com/',
+    'https://d3k3ewady7k3ym.cloudfront.net/'
+  )
+  const media = {...params,
+    Item: {
+      created: Date.now(),
+      dataKey: 'media-' + uuidv1().slice(0, 8),
+      dataSource: req.params.entry,
+      link: mediaLink,
+      filename: req.files[0].originalname,
+      fileType: req.files[0].mimetype,
+      title: checkString(req.body.title),
+      geotag: checkGeo({lat: req.body.lat, long: req.body.long})
+    }
+  };
+  console.log(media)
+  db.put(media, error => {
+    if (error) {
+      res.status(502).json({ error });
+    } else {
+      res.status(201).json({
+        message: 'New media saved with id ' + media.Item.dataKey + '. link: ' + mediaLink
+      });
+    };
+  });
 });
 
 router.get('/:entry/media', checkAuth, (req, res) => {

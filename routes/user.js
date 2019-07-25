@@ -1,7 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import checkAuth from '../services/check-auth';
+import checkAuth from '../middleware/check-auth';
 import { db } from '../services/aws-config';
 
 const router = express.Router();
