@@ -4,7 +4,6 @@ import { db } from '../services/aws-config';
 export default (req, res, next) => {
   const dataKey = req.body.email || req.params.email
   db.get({...req.table, Key: { dataSource: 'user', dataKey }}, (error, data) => {
-    console.log(data)
     if (error) {
       res.status(502).json({ error });
     } else if (!data || data && Object.entries(data).length === 0) {

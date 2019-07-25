@@ -13,9 +13,10 @@ const apiRouter = express.Router();
 app.use('/api/v1', apiRouter);
 
 apiRouter.use('/', userRouter);
-apiRouter.use('/', mediaRouter);
-apiRouter.use('/', entryRouter);
 apiRouter.use('/', tripRouter);
+tripRouter.use('/', entryRouter);
+tripRouter.use('/', mediaRouter);
+
 
 const port = process.env.PORT || 443;
 
