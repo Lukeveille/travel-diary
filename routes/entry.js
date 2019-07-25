@@ -5,14 +5,21 @@ import checkTrip from '../middleware/check-trip';
 import checkEntry from '../middleware/check-entry';
 import checkString from '../middleware/check-string';
 import checkGeo from '../middleware/check-geo';
-import linkRegex from '../services/link-regex';
 import { db } from '../services/aws-config';
 
 const router = express.Router();
 const params = { TableName: 'trip-diary' };
+const linkRegex = new RegExp(
+  '^(https?:\\/\\/)?' +
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+  '((\\d{1,3}\\.){3}\\d{1,3}))' +
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+  '(\\?[;&a-z\\d%_.~+=-]*)?' +
+  '(\\#[-a-z\\d_]*)?$','i'
+);
 
 router.post('/:trip/new-entry', checkAuth, checkTrip, (req, res) => {
-  const newEntry = {...params,
+  const newEntry = {...req.params,
     Item: {
       created: Date.now(),
       dataSource: req.params.trip,
@@ -37,7 +44,7 @@ router.post('/:trip/new-entry', checkAuth, checkTrip, (req, res) => {
 });
 
 router.get('/:trip/entries', checkAuth, checkTrip, (req, res) => {
-  const entryQuery = {...params,
+  const entryQuery = {...req.params,
     Key: { dataSource: req.params.trip },
     KeyConditionExpression: 'dataSource = :tripId',
     ExpressionAttributeValues: { ':tripId': req.params.trip }
@@ -52,7 +59,7 @@ router.get('/:trip/entries', checkAuth, checkTrip, (req, res) => {
 });
 
 router.get('/:trip/:entry', checkAuth, checkTrip, checkEntry, (req, res) => {
-  db.get({...params, Key: { dataSource: req.params.trip, dataKey: req.params.entry }}, (error, data) => {
+  db.get({...req.params, Key: { dataSource: req.params.trip, dataKey: req.params.entry }}, (error, data) => {
     if (error) {
       res.status(502).json({ error });
     } else {
@@ -62,7 +69,7 @@ router.get('/:trip/:entry', checkAuth, checkTrip, checkEntry, (req, res) => {
 });
 
 router.patch('/:trip/:entry', checkAuth, checkTrip, checkEntry, (req, res) => {
-  const updateParams = {...params, Key: { dataSource: req.params.trip, dataKey: req.params.entry }}
+  const updateParams = {...req.params, Key: { dataSource: req.params.trip, dataKey: req.params.entry }}
   db.get(updateParams, (error, data) => {
     if (error) {
       res.status(502).json({ error });
@@ -91,7 +98,7 @@ router.patch('/:trip/:entry', checkAuth, checkTrip, checkEntry, (req, res) => {
 });
 
 router.delete('/:trip/:entry', checkAuth, checkTrip, checkEntry, (req, res) => {
-  db.delete({...params, Key: { dataSource: req.params.trip, dataKey: req.params.entry }}, (error, data) => {
+  db.delete({...req.params, Key: { dataSource: req.params.trip, dataKey: req.params.entry }}, (error, data) => {
     if (error) {
       res.status(502).json({ error });
     } else {

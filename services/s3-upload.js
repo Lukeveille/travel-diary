@@ -10,7 +10,7 @@ const upload = multer({
       cb(null, { fieldName: 'testing'});
     },
     key: (req, file, cb) => {
-      cb(null, file.originalname.toString());
+      cb(null, (req.mediaId + '_' + file.originalname.toString()));
     }
   })
 });

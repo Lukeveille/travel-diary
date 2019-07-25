@@ -1,7 +1,7 @@
 import { db } from '../services/aws-config';
 
 export default (req, res, next) => {
-  db.get({TableName: 'trip-diary', Key: { dataSource: req.userData.email, dataKey: req.params.trip }}, (error, data) => {
+  db.get({...req.table, Key: { dataSource: req.userData.email, dataKey: req.params.trip }}, (error, data) => {
     if (error) {
       res.status(502).json({ error });
     } else {

@@ -12,8 +12,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const apiRouter = express.Router();
 app.use('/api/v1', apiRouter);
 
-apiRouter.use('/', mediaRouter);
 apiRouter.use('/', userRouter);
+apiRouter.use('/', mediaRouter);
 apiRouter.use('/', entryRouter);
 apiRouter.use('/', tripRouter);
 

@@ -6,21 +6,15 @@ import checkTrip from '../middleware/check-trip';
 import checkEntry from '../middleware/check-entry';
 import checkString from '../middleware/check-string';
 import checkGeo from '../middleware/check-geo';
+import checkFile from '../middleware/check-file';
+import setId from '../middleware/set-id';
 import { db } from '../services/aws-config';
 
 const router = express.Router();
 const params = { TableName: 'trip-diary' };
 const singleUpload = upload.any();
 
-const checkFile = (req, res, next) => {
-  if (req.files[0]) {   
-    next()
-  } else {
-    res.status(400).json({ error: 'You must attach a file' })
-  }
-};
-
-router.post('/:trip/:entry/new-media', checkAuth, checkTrip, checkEntry, singleUpload, checkFile, (req, res) => {
+router.post('/:trip/:entry/new-media', checkAuth, checkTrip, checkEntry, setId, singleUpload, checkFile, (req, res) => {
   const mediaLink = req.files[0].location.replace(
     'https://travel-diary.s3.us-east-2.amazonaws.com/',
     'https://d3k3ewady7k3ym.cloudfront.net/'
@@ -31,7 +25,7 @@ router.post('/:trip/:entry/new-media', checkAuth, checkTrip, checkEntry, singleU
       dataKey: 'media-' + uuidv1().slice(0, 8),
       dataSource: req.params.entry,
       link: mediaLink,
-      filename: req.files[0].originalname,
+      filename: req.mediaId + '_' + req.files[0].originalname,
       fileType: req.files[0].mimetype,
       title: checkString(req.body.title),
       geotag: checkGeo({lat: req.body.lat, long: req.body.long})
