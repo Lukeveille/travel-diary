@@ -17,7 +17,7 @@ export default {
         res.status(502).json({ error });
       } else {
         res.status(201).json({
-          message: newTrip.Item.dataKey
+          message: newTrip.Item.dataKey + ' created'
         });
       };
     });
@@ -62,7 +62,7 @@ export default {
             res.status(500).json({ error });
           } else {
             res.status(202).json({
-              message: 'Trip with id ' + req.params.trip + ' updated'
+              message: req.params.trip + ' updated'
             });
           };
         });
@@ -75,7 +75,7 @@ export default {
         res.status(500).json({ error });
       } else {
         res.status(202).json({
-          message: 'Trip with id ' + req.params.trip + ' deleted'
+          message: req.params.trip + ' deleted'
         });
       };
     });
