@@ -11,7 +11,7 @@ export default {
     const media = {...req.table,
       Item: {
         created: Date.now(),
-        dataKey: 'media-' + req.mediaId,
+        dataKey: req.files[0].mimetype.split('/')[0] + '-' + req.mediaId,
         dataSource: req.params.entry,
         link: mediaLink,
         filename: req.mediaId + '_' + req.files[0].originalname,
@@ -31,8 +31,54 @@ export default {
       };
     });
   },
-  index: 0,
-  read: 0,
-  update: 0,
-  delete: 0,
+  index: {
+    entry: (req, res) => {
+      res.json({where: "entry"})
+      // const entryQuery = {...req.table,
+      //   Key: { dataSource: req.params.trip },
+      //   KeyConditionExpression: 'dataSource = :tripId',
+      //   ExpressionAttributeValues: { ':tripId': req.params.trip }
+      // }
+      // db.query(entryQuery, (error, data) => {
+      //   if (error) {
+      //     res.status(502).json({ error });
+      //   } else {
+      //     res.json(data.Items);
+      //   };
+      // });
+    },
+    trip: (req, res) => {
+      res.json({where: "trip"})
+      // const entryQuery = {...req.table,
+      //   Key: { dataSource: req.params.trip },
+      //   KeyConditionExpression: 'dataSource = :tripId',
+      //   ExpressionAttributeValues: { ':tripId': req.params.trip }
+      // }
+      // db.query(entryQuery, (error, data) => {
+      //   if (error) {
+      //     res.status(502).json({ error });
+      //   } else {
+      //     res.json(data.Items);
+      //   };
+      // });
+    },
+    user: (req, res) => {
+      res.json({where: "user"})
+      // const entryQuery = {...req.table,
+      //   Key: { dataSource: req.params.trip },
+      //   KeyConditionExpression: 'dataSource = :tripId',
+      //   ExpressionAttributeValues: { ':tripId': req.params.trip }
+      // }
+      // db.query(entryQuery, (error, data) => {
+      //   if (error) {
+      //     res.status(502).json({ error });
+      //   } else {
+      //     res.json(data.Items);
+      //   };
+      // });
+    }
+  },
+  read: (req, res) => { res.json({where: 'aw shit'})},
+  update: (req, res) => {},
+  delete: (req, res) => {}
 }

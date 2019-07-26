@@ -17,7 +17,7 @@ export default {
         res.status(502).json({ error });
       } else {
         res.status(201).json({
-          message: 'New trip created with id ' + newTrip.Item.dataKey
+          message: newTrip.Item.dataKey
         });
       };
     });
