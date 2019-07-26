@@ -13,8 +13,8 @@ const singleUpload = upload.any();
 
 router.post('/:trip/:entry/media-upload', checkAuth, setTable, checkTrip, checkEntry, setId, singleUpload, checkFile, media.new);
 router.get('/media', checkAuth, setTable, media.index.user);
-router.get('/:trip/media', checkAuth, setTable, media.index.trip);
-router.get('/:trip/:entry/media', checkAuth, setTable, media.index.entry);
+router.get('/:trip/media', checkAuth, setTable, checkTrip, media.index.trip);
+router.get('/:trip/:entry/media', checkAuth, setTable, checkTrip, checkEntry, media.index.entry);
 router.get('/media/:media', checkAuth, setTable, media.read);
 router.patch('/media/:media', checkAuth, setTable, media.update);
 router.delete('/media/:media', checkAuth, setTable, media.delete);

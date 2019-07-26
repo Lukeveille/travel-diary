@@ -2,6 +2,56 @@ import checkString from '../middleware/check-string';
 import checkGeo from '../middleware/check-geo';
 import { db } from '../services/aws-config';
 
+const entry = (req, res, next, done) => {
+  const entryQuery = {...req.table,
+    Key: { dataSource: req.params.trip },
+    KeyConditionExpression: 'dataSource = :entryId',
+    ExpressionAttributeValues: { ':entryId': req.params.entry }
+  }
+  db.query(entryQuery, (error, data) => {
+    if (error) {
+      res.status(502).json({ error });
+    } else {
+      req.Items = req.Items.concat(data.Items);
+      if (done) { res.json(req.Items) }
+    };
+  });
+}
+const trip = (req, res, next, done = true) => {
+  const entryQuery = {...req.table,
+    Key: { dataSource: req.params.trip },
+    KeyConditionExpression: 'dataSource = :tripId',
+    ExpressionAttributeValues: { ':tripId': req.params.trip }
+  }
+  db.query(entryQuery, (error, data) => {
+    if (error) {
+      res.status(502).json({ error });
+    } else {
+      for (let i = 0; i < data.Items.length; i++) {
+        req.params.entry = data.Items[i].dataKey
+        entry(req, res, next, (i+1 === data.Items.length && done))
+      }
+    };
+  });
+}
+const user = (req, res, next) => {
+  const entryQuery = {...req.table,
+    Key: { dataSource: req.params.trip },
+    KeyConditionExpression: 'dataSource = :userEmail',
+    ExpressionAttributeValues: { ':userEmail': req.userData.email }
+  }
+  db.query(entryQuery, (error, data) => {
+    if (error) {
+      res.status(502).json({ error });
+    } else {
+      for (let i = 0; i < data.Items.length; i++) {
+        req.params.trip = data.Items[i].dataKey
+        trip(req, res, next, (i+1 === data.Items.length))
+      }
+    };
+  });
+}
+
 export default {
   new: (req, res) => {
     const mediaLink = req.files[0].location.replace(
@@ -32,50 +82,17 @@ export default {
     });
   },
   index: {
-    entry: (req, res) => {
-      res.json({where: "entry"})
-      // const entryQuery = {...req.table,
-      //   Key: { dataSource: req.params.trip },
-      //   KeyConditionExpression: 'dataSource = :tripId',
-      //   ExpressionAttributeValues: { ':tripId': req.params.trip }
-      // }
-      // db.query(entryQuery, (error, data) => {
-      //   if (error) {
-      //     res.status(502).json({ error });
-      //   } else {
-      //     res.json(data.Items);
-      //   };
-      // });
+    entry: (req, res, next) => {
+      req.Items = [];
+      entry(req, res, next, true);
     },
     trip: (req, res) => {
-      res.json({where: "trip"})
-      // const entryQuery = {...req.table,
-      //   Key: { dataSource: req.params.trip },
-      //   KeyConditionExpression: 'dataSource = :tripId',
-      //   ExpressionAttributeValues: { ':tripId': req.params.trip }
-      // }
-      // db.query(entryQuery, (error, data) => {
-      //   if (error) {
-      //     res.status(502).json({ error });
-      //   } else {
-      //     res.json(data.Items);
-      //   };
-      // });
+      req.Items = [];
+      trip(req, res);
     },
-    user: (req, res) => {
-      res.json({where: "user"})
-      // const entryQuery = {...req.table,
-      //   Key: { dataSource: req.params.trip },
-      //   KeyConditionExpression: 'dataSource = :tripId',
-      //   ExpressionAttributeValues: { ':tripId': req.params.trip }
-      // }
-      // db.query(entryQuery, (error, data) => {
-      //   if (error) {
-      //     res.status(502).json({ error });
-      //   } else {
-      //     res.json(data.Items);
-      //   };
-      // });
+    user: (req, res, next) => {
+      req.Items = [];
+      user(req, res);
     }
   },
   read: (req, res) => { res.json({where: 'aw shit'})},
