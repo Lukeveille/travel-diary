@@ -1,15 +1,13 @@
 import checkString from '../middleware/check-string';
 import checkGeo from '../middleware/check-geo';
+import deleteMedia from '../services/delete-media';
 import { db } from '../services/aws-config';
-import { s3 } from '../services/aws-config';
-
-const cloudFront = 'https://d3k3ewady7k3ym.cloudfront.net/';
 
 export default {
   new: (req, res) => {
     const mediaLink = req.files[0].location.replace(
       'https://travel-diary.s3.us-east-2.amazonaws.com/',
-      cloudFront
+      'https://d3k3ewady7k3ym.cloudfront.net/'
     )
     const media = {...req.table,
       Item: {
@@ -83,23 +81,15 @@ export default {
     });
   },
   delete: (req, res) => {
-    db.delete({...req.table, Key: { dataSource: req.params.entry, dataKey: req.params.media }}, (error, data) => {
+    const messages = (error, res, message) => {
       if (error) {
-        res.status(502).json({ error });
+        res.status(502).json({ error })
+      } else if (error && message) {
+        res.status(502).json({ message, error })
       } else {
-        s3.deleteObject({
-          Bucket: process.env.TRAVEL_DIARY_AWS_BUCKET,
-          Key: req.filename
-        }, (error, data) => {
-          if (error) {
-            res.status(502).json(error)
-          } else {
-            res.status(202).json({
-              message: req.filename + ' deleted'
-            });
-          };
-        });
-      };
-    });
+        res.status(202).json({ message })
+      }
+    }
+    deleteMedia(req, res, messages);
   }
 }

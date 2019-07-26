@@ -13,9 +13,9 @@ const router = express.Router();
 const singleUpload = upload.any();
 
 router.post('/:trip/:entry', checkAuth, setTable, checkTrip, checkEntry, setId, singleUpload, checkFile, media.new);
-router.get('/:entry', checkAuth, setTable, media.index);
-router.get('/:entry/:media', checkAuth, setTable, checkMedia, media.read);
-router.patch('/:entry/:media', checkAuth, setTable, media.update);
-router.delete('/:entry/:media', checkAuth, setTable, checkMedia, media.delete);
+router.get('/media/:entry', checkAuth, setTable, media.index);
+router.get('/media/:entry/:media', checkAuth, setTable, checkMedia, media.read);
+router.patch('/media/:entry/:media', checkAuth, setTable, media.update);
+router.delete('/media/:entry/:media', checkAuth, setTable, checkMedia, media.delete);
 
 export default router;
