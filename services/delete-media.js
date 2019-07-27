@@ -5,7 +5,7 @@ export default (req, res, next) => {
   let message = ''
   db.delete({...req.table, Key: { dataSource: req.params.entry, dataKey: req.params.media }}, (error, data) => {
     if (error) {
-      next(error, res)
+      next(req, res, error)
     } else {
       message = req.filename + ' deleted from db'
     };
@@ -15,9 +15,9 @@ export default (req, res, next) => {
     Key: req.filename
   }, (error, data) => {
     if (error) {
-      next(error, res, message)
+      next(req, res, error, message)
     } else {
-      next(null, res, message + ' and s3')
+      next(req, res, null, message + ' and s3')
     };
   });
 };

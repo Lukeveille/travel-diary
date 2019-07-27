@@ -1,8 +1,7 @@
 import uuidv1 from 'uuid';
 import checkString from '../middleware/check-string';
 import checkGeo from '../middleware/check-geo';
-import deleteMedia from '../services/delete-media';
-// import checkMedia from '../services/check-media';
+import deleteEntries from '../services/delete-entries';
 import { db } from '../services/aws-config';
 
 const linkRegex = new RegExp(
@@ -90,27 +89,5 @@ export default {
       };
     });
   },
-  delete: (req, res) => {
-    const deleteQuery = {...req.table,
-      Key: { dataSource: req.params.entry },
-      KeyConditionExpression: 'dataSource = :tripId',
-      ExpressionAttributeValues: { ':tripId': req.params.entry }
-    }
-    db.query(deleteQuery, (error, data) => {
-      data.Items.forEach(item => {
-        req.params.media = item.dataKey
-        req.filename = item.filename
-        deleteMedia(req, res)
-      })
-    })
-    db.delete({...req.table, Key: { dataSource: req.params.trip, dataKey: req.params.entry }}, (error, data) => {
-      if (error) {
-        res.status(502).json({ error });
-      } else {
-        res.status(202).json({
-          message: req.params.entry + ' deleted'
-        });
-      };
-    });
-  }
+  delete: deleteEntries
 }
