@@ -1,6 +1,6 @@
 import checkString from '../middleware/check-string';
 import checkGeo from '../middleware/check-geo';
-import deleteMedia from '../services/delete-media';
+import deleteMedia from './delete-media';
 import { db } from '../services/aws-config';
 
 const fileRegex = new RegExp(/^.*\.(jpg|gif|png|mp4|mov|webm|mp3|aac|aiff|m4a|wav)$/, 'i');

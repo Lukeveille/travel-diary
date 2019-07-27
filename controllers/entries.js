@@ -1,7 +1,7 @@
 import uuidv1 from 'uuid';
 import checkString from '../middleware/check-string';
 import checkGeo from '../middleware/check-geo';
-import deleteEntries from '../services/delete-entries';
+import deleteEntries from './delete-entries';
 import { db } from '../services/aws-config';
 
 const linkRegex = new RegExp(
@@ -89,5 +89,16 @@ export default {
       };
     });
   },
-  delete: deleteEntries
+  delete: (req, res) => {
+    const messages = (error, message) => {
+      if (error) {
+        res.status(502).json({ error })
+      } else if (error && message) {
+        res.status(502).json({ message, error })
+      } else {
+        res.status(202).json({ message })
+      }
+    }
+    deleteEntries(req, res, messages)
+  }
 }

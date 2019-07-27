@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { db } from '../services/aws-config';
+import deleteUser from './delete-user';
 
 export default {
   signup: (req, res) => {
@@ -33,14 +34,15 @@ export default {
     });
   },
   delete: (req, res) => {
-    db.delete({...req.table, Key: { dataSource: 'user', dataKey: req.userData.email }}, (error, data) => {
+    const messages = (error, message) => {
       if (error) {
-        res.status(502).json({ error });
+        res.status(502).json(error)
+      } else if (error && message) {
+        res.status(502).json({ message, error })
       } else {
-        res.status(202).json({
-          message: 'User with e-mail address ' + req.params.email + ' deleted'
-        });
-      };
-    });
+        res.status(202).json(message)
+      }
+    }
+    deleteUser(req, res, messages)
   }
 };

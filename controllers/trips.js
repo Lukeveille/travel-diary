@@ -1,5 +1,6 @@
 import uuidv1 from 'uuid';
 import { db } from '../services/aws-config';
+import deleteTrips from './delete-trips';
 
 export default {
   new: (req, res) => {
@@ -70,14 +71,15 @@ export default {
     });
   },
   delete: (req, res) => {
-    db.delete({...req.table, Key: { dataSource: req.userData.email, dataKey: req.params.trip }}, (error, data) => {
+    const messages = (error, message) => {
       if (error) {
-        res.status(500).json({ error });
+        res.status(502).json(error)
+      } else if (error && message) {
+        res.status(502).json({ message, error })
       } else {
-        res.status(202).json({
-          message: req.params.trip + ' deleted'
-        });
-      };
-    });
+        res.status(202).json(message)
+      }
+    }
+    deleteTrips(req, res, messages)
   }
 };

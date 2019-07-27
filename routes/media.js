@@ -12,7 +12,7 @@ import setId from '../middleware/set-id';
 const router = express.Router();
 const singleUpload = upload.any();
 
-router.post('/:trip/:entry/media-upload', checkAuth, setTable, checkTrip, checkEntry, setId, singleUpload, checkFile, media.new);
+router.post('/:trip/:entry', checkAuth, setTable, checkTrip, checkEntry, setId, singleUpload, checkFile, media.new);
 router.get('/:trip/:entry/media', checkAuth, setTable, checkTrip, checkEntry, media.index);
 router.get('/:trip/:entry/:media', checkAuth, setTable, checkTrip, checkEntry, checkMedia, media.read);
 router.patch('/:trip/:entry/:media', checkAuth, setTable, checkTrip, checkEntry, media.update);
