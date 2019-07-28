@@ -18,7 +18,8 @@ export default {
         res.status(502).json({ error });
       } else {
         res.status(201).json({
-          message: newTrip.Item.dataKey + ' created'
+          message: newTrip.Item.dataKey + ' created',
+          id: newTrip.Item.dataKey
         });
       };
     });
@@ -63,7 +64,7 @@ export default {
             res.status(500).json({ error });
           } else {
             res.status(202).json({
-              message: req.params.trip + ' updated'
+              message: req.params.trip + ' updated',
             });
           };
         });

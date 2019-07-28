@@ -33,7 +33,8 @@ export default {
         res.status(502).json({ error });
       } else {
         res.status(201).json({
-          message: newEntry.Item.dataKey + ' created'
+          message: newEntry.Item.dataKey + ' created',
+          id: newEntry.Item.dataKey
         });
       };
     });

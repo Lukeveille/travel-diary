@@ -3,8 +3,6 @@ import checkGeo from '../middleware/check-geo';
 import deleteMedia from './delete-media';
 import { db } from '../services/aws-config';
 
-const fileRegex = new RegExp(/^.*\.(jpg|gif|png|mp4|mov|webm|mp3|aac|aiff|m4a|wav)$/, 'i');
-
 export default {
   new: (req, res) => {
     const mediaLink = req.files[0].location.replace(
@@ -29,7 +27,9 @@ export default {
         res.status(502).json({ error });
       } else {
         res.status(201).json({
-          message: media.Item.dataKey + ' created: ' + mediaLink
+          message: media.Item.dataKey + ' created: ' + mediaLink,
+          id: media.Item.dataKey,
+          link: mediaLink
         });
       };
     });

@@ -1,40 +1,58 @@
-var axios = require('axios');
+const axios = require('axios');
+const uuidv1 = require('uuid');
 
 const user = {
-  email: 'test@test.com',
+  email: uuidv1().slice(0, 8) + '@test.com',
   password: '123456'
 };
 const url = 'http://localhost:443/api/v1/';
 
-let token = '';
+const handleError = err => {
+  console.log(err);
+};
 
-
-axios.post(url + 'signup', user)
-.then(res => {
+const login = res => {
   console.log(res.data.message)
   axios.post(url + 'login', user)
-  .then(response => {
-    headers = {'Authorization': 'Bearer ' + response.data.token }
-    axios({
-      method: 'post',
-      url: url + 'new-trip',
-      headers
-    }).then(re => {
-      console.log(re.data.message)
-    }).catch(error => {
-      console.log(error)
-    });
-  }).catch(err => {
-    console.log(err);
-  })
-}).catch(er => {
-  console.log(er);
-})
+  .then(newTrip)
+  .catch(handleError);
+};
 
-// 
-//   headers: {'Authorization': 'Bearer ' + token }
-// }).then(re => {
-//   console.log(re.data.message)
-// }).catch(error => {
-//   console.log(error)
+const newTrip = res => {
+  const headers = {
+    Accept: 'application/json, text/plain, */*',
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + res.data.token
+  }
+  const request = {
+    method: 'post',
+    url: url + 'new-trip',
+    headers
+  }
+  axios(request)
+  .then(newEntry)
+  .catch(handleError);
+}
+const newEntry = res => {
+  console.log(res.data.message)
+  const request = {
+    method: 'post',
+    url: url + res.data.id,
+    headers: {'Authorization': res.config.headers.Authorization}
+  }
+  axios(request)
+  .then(res => {
+    console.log(res.data.message)
+  })
+  .catch(handleError)
+}
+
+axios.post(url + 'signup', user)
+.then(login)
+.catch(handleError)
+
+// axios.post(url + 'login', user)
+// .then(login)
+// .catch(er => {
+//   console.log(er);
 // })
