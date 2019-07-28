@@ -6,6 +6,7 @@ const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: process.env.TRAVEL_DIARY_AWS_BUCKET,
+    acl: 'public-read',
     metadata: (req, file, cb) => {
       cb(null, { source: req.params.entry, id: req.mediaId});
     },
