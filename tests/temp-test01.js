@@ -1,6 +1,10 @@
 const axios = require('axios');
 const uuidv1 = require('uuid');
 
+process.env.NODE_ENV = 'testing';
+
+console.log(process.env.NODE_ENV)
+
 const user = {
   email: uuidv1().slice(0, 8) + '@test.com',
   password: '123456'

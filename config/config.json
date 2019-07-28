@@ -1,0 +1,22 @@
+{
+  "development": {
+    "config_id": "development",
+    "app_name": "travel-diary",
+    "node_port": 3000,
+    "database": "travel-diary-development"
+  },
+  "testing": {
+    "config_id": "testing",
+    "database": "travel-diary-testing"
+  },
+  "staging": {
+    "config_id": "staging",
+    "node_port": 443,
+    "database": "travel-diary-staging"
+  },
+  "production": {
+    "config_id": "production",
+    "node_port": 443,
+    "database": "travel-diary"
+  }
+}

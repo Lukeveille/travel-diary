@@ -1,4 +1,4 @@
 export default (req, res, next) => {
-  req.table = { TableName: 'trip-diary' };
+  req.table = { TableName: global.gConfig.database };
   next();
 };

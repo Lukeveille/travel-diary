@@ -1,9 +1,12 @@
 import express from "express";
 import bodyParser from 'body-parser';
+import config from './config/config.js';
 import userRouter from './routes/user';
 import tripRouter from './routes/trip';
 import entryRouter from './routes/entry';
 import mediaRouter from './routes/media';
+
+process.env.NODE_ENV = 'development';
 
 const app = express();
 app.use(bodyParser.json());
