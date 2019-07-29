@@ -18,14 +18,16 @@
   },
   "devDependencies": {
     "@babel/core": "^7.5.4",
-    "axios": "^0.19.0",
     "@babel/preset-env": "^7.5.4",
     "@babel/register": "^7.4.4",
-    "lodash": ">=4.17.13"
+    "chai": "^4.2.0",
+    "lodash": ">=4.17.13",
+    "mocha": "^6.2.0",
+    "supertest": "^4.0.2"
   },
   "scripts": {
     "test": "test",
-    "start": "nodemon start"
+    "start": "NODE_ENV=development nodemon start"
   },
   "repository": {
     "type": "git",

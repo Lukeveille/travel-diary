@@ -6,8 +6,6 @@ import tripRouter from './routes/trip';
 import entryRouter from './routes/entry';
 import mediaRouter from './routes/media';
 
-process.env.NODE_ENV = 'development';
-
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,8 +23,8 @@ apiRouter.use('/', entryRouter);
 apiRouter.use('/', mediaRouter);
 
 
-const port = process.env.PORT || 443;
+const port = process.env.PORT || global.gConfig.node_port;
 
 app.listen(port, () => {
-  console.log('Server running on port ' + port);
+  console.log(global.gConfig.config_id + ' server running on port ' + port);
 });
