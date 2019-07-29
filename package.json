@@ -4,30 +4,38 @@
   "description": "a way to track your travels",
   "main": "app.js",
   "dependencies": {
+    "assert": "^2.0.0",
     "aws-sdk": "^2.496.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "helmet": "^3.20.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.6.4",
     "multer": "^1.4.2",
     "multer-s3": "^2.9.0",
     "nodemon": "^1.19.1",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.4",
-    "@babel/preset-env": "^7.5.4",
-    "@babel/register": "^7.4.4",
+    "babel-cli": "^6.26.0",
+    "babel-preset-node8": "^1.2.0",
     "chai": "^4.2.0",
     "lodash": ">=4.17.13",
     "mocha": "^6.2.0",
     "supertest": "^4.0.2"
   },
   "scripts": {
-    "test": "test",
-    "start": "NODE_ENV=development nodemon start"
+    "test": "NODE_ENV=testing mocha --require babel-core/register --reporter spec --exit test/ --exec babel-node",
+    "start": "NODE_ENV=development nodemon server --exec babel-node"
+  },
+  "babel": {
+    "presets": [
+      "node8"
+    ]
+  },
+  "engines": {
+    "node": ">=8"
   },
   "repository": {
     "type": "git",
