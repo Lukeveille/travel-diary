@@ -27,7 +27,7 @@
   },
   "scripts": {
     "test": "NODE_ENV=testing mocha --require babel-core/register --reporter spec --exit tests/ --exec babel-node",
-    "start": "NODE_ENV=development nodemon server --exec babel-node"
+    "start": "NODE_ENV=development nodemon ./src/server --exec babel-node"
   },
   "babel": {
     "presets": [
