@@ -11,8 +11,6 @@ const route = '/api/v1'
 
 describe('Unit testing signup path', () => {
 
-  let auth = {};
-
   it('should return 201 created with message', () => {
     return request(app)
       .post(route + '/signup')
@@ -32,7 +30,6 @@ describe('Unit testing signup path', () => {
         expect(res.body.error).to.contain('User already exists!')
       })
   });
-
 });
 
 describe('Unit testing login path', () => {
@@ -60,7 +57,6 @@ describe('Unit testing login path', () => {
         expect(res.body.message).to.contain('Login successful');
       });
   });
-
 });
 
 describe('Unit testing delete path', () => {
@@ -86,7 +82,7 @@ describe('Unit testing delete path', () => {
       });
   });
 
-  it('should delete user and return 202 accept if logged in', () => {
+  it('should delete user and return 202 accepted if logged in', () => {
     return request(app)
       .del(deleteRoute)
       .set('Authorization', 'Bearer ' + token)
