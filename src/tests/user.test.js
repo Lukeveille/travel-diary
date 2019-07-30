@@ -60,6 +60,7 @@ describe('Unit testing login path', () => {
 });
 
 describe('Unit testing delete path', () => {
+  const deleteRoute = route + '/delete/test@test.com';
   let token = null;
   before(done => {
     request(app)
@@ -70,7 +71,6 @@ describe('Unit testing delete path', () => {
       done();
     })
   });
-  const deleteRoute = route + '/delete/test@test.com';
 
   it("should return 401 unauthorized with error if not logged in", () => {
     return request(app)
