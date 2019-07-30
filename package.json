@@ -26,7 +26,7 @@
     "supertest": "^4.0.2"
   },
   "scripts": {
-    "test": "NODE_ENV=testing mocha --require babel-core/register --reporter spec --exit test/ --exec babel-node",
+    "test": "NODE_ENV=testing mocha --require babel-core/register --reporter spec --exit tests/ --exec babel-node",
     "start": "NODE_ENV=development nodemon server --exec babel-node"
   },
   "babel": {
