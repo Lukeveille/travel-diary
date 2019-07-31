@@ -2,7 +2,7 @@
   "development": {
     "config_id": "development",
     "app_name": "travel-diary",
-    "node_port": 3000,
+    "node_port": 3443,
     "database": "travel-diary-development"
   },
   "testing": {
