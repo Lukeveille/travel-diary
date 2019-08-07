@@ -1,4 +1,5 @@
 import uuidv1 from 'uuid';
+import checkString from '../middleware/check-string';
 import { db } from '../services/aws-config';
 import deleteTrips from './delete-trips';
 
@@ -7,6 +8,7 @@ export default {
     const newTrip = {...req.table,
       Item: {
         created: Date.now(),
+        title: checkString(req.body.title),
         dataSource: req.userData.email,
         dataKey: 'trip-' + uuidv1().slice(0, 8),
         startTime: req.body.startTime * 1 || Date.now(),
@@ -43,7 +45,7 @@ export default {
       if (error) {
         res.status(502).json({ error });
       } else {
-        res.json(data.Items);
+        res.json({user: req.userData.email, trips: data.Items});
       };
     });
   },
@@ -53,11 +55,12 @@ export default {
       if (error) {
         res.status(500).json({ error });
       } else {
-        updateParams.UpdateExpression = 'set updated = :updated, startTime = :startTime, endTime = :endTime',
+        updateParams.UpdateExpression = 'set updated = :updated, startTime = :startTime, endTime = :endTime, title = :title',
         updateParams.ExpressionAttributeValues = {
           ':updated': Date.now(),
           ':startTime': req.body.startTime * 1 || data.Item.startTime,
-          ':endTime': req.body.endTime * 1 || data.Item.endTime
+          ':endTime': req.body.endTime * 1 || data.Item.endTime,
+          ':title': checkString(req.body.title)
         };
         db.update(updateParams, (error, data) => {
           if (error) {
