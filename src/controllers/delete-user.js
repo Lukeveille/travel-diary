@@ -17,7 +17,6 @@ export default (req, res, next) => {
     data.Items.forEach(item => {
       req.params.trip = item.dataKey
       deleteTrips(req, res, messages)
-      console.log(item.dataKey)
       message.trips.push(item.dataKey + ' and associated entries and media deleted')
     });
   });
