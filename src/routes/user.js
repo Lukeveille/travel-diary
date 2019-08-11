@@ -11,6 +11,7 @@ const router = express.Router();
 
 router.post('/signup', checkCredentials, setTable, checkUser, checkSignup, users.signup);
 router.post('/login', setTable, validateUser, users.login);
+router.patch('/', checkAuth, setTable, validateUser, users.update);
 router.delete('/delete/:email', checkAuth, setTable, validateUser, users.delete);
 
 export default router;

@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { db } from '../services/aws-config';
 import deleteUser from './delete-user';
 
@@ -31,6 +32,35 @@ export default {
     res.status(202).json({
       message: "Login successful",
       token
+    });
+  },
+  update: (req, res) => {
+    const updatePassword = {...req.table, Key: { dataSource: 'user', dataKey: req.userData.email }}
+    bcrypt.hash(req.body.newPassword, 10, (err, hash) => {
+      if (err) {
+        res.status(400).json({ error: "Invalid password"});
+      } else {
+        db.get(updatePassword, (error, data) => {
+          if (error) {
+            res.status(500).json({ error });
+          } else {
+            updatePassword.UpdateExpression = 'set updated = :updated, password = :newPassword',
+            updatePassword.ExpressionAttributeValues = {
+              ':updated': Date.now(),
+              ':newPassword': hash
+            };
+            db.update(updatePassword, (error, data) => {
+              if (error) {
+                res.status(500).json({ error });
+              } else {
+                res.status(202).json({
+                  message: req.userData.email + ' updated password',
+                });
+              };
+            });
+          };
+        });
+      };
     });
   },
   delete: (req, res) => {
