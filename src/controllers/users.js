@@ -36,27 +36,22 @@ export default {
   },
   update: (req, res) => {
     const updatePassword = {...req.table, Key: { dataSource: 'user', dataKey: req.userData.email }}
-    bcrypt.hash(req.body.newPassword, 10, (err, hash) => {
-      if (err) {
-        res.status(400).json({ error: "Invalid password"});
+    
+    db.get(updatePassword, (error, data) => {
+      if (error) {
+        res.status(500).json({ error });
       } else {
-        db.get(updatePassword, (error, data) => {
+        updatePassword.UpdateExpression = 'set updated = :updated, password = :newPassword',
+        updatePassword.ExpressionAttributeValues = {
+          ':updated': Date.now(),
+          ':newPassword': req.newHash
+        };
+        db.update(updatePassword, (error, data) => {
           if (error) {
             res.status(500).json({ error });
           } else {
-            updatePassword.UpdateExpression = 'set updated = :updated, password = :newPassword',
-            updatePassword.ExpressionAttributeValues = {
-              ':updated': Date.now(),
-              ':newPassword': hash
-            };
-            db.update(updatePassword, (error, data) => {
-              if (error) {
-                res.status(500).json({ error });
-              } else {
-                res.status(202).json({
-                  message: req.userData.email + ' updated password',
-                });
-              };
+            res.status(202).json({
+              message: req.userData.email + ' updated password',
             });
           };
         });
