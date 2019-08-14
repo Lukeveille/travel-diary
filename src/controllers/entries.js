@@ -28,6 +28,7 @@ export default {
         geotag: checkGeo(req.body.geotag)
       }
     };
+    console.log(newEntry)
     db.put(newEntry, error => {
       if (error) {
         res.status(502).json({ error });
