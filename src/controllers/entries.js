@@ -71,7 +71,7 @@ export default {
           updateParams.UpdateExpression = 'set updated = :updated, entryTime = :entryTime, message = :message, title = :title, locationName = :locationName, link = :link, geotag = :geotag',
           updateParams.ExpressionAttributeValues = {
             ':updated': Date.now(),
-            ':entryTime': data.Item.entryTime * 1 || data.Item.entryTime,
+            ':entryTime': req.body.entryTime || data.Item.entryTime,
             ':message': checkString(req.body.message, data.Item.message),
             ':title': checkString(req.body.title, data.Item.title),
             ':locationName': checkString(req.body.locationName, data.Item.locationName),
