@@ -22,7 +22,7 @@
     "babel-preset-node8": "^1.2.0",
     "chai": "^4.2.0",
     "lodash": ">=4.17.13",
-    "mocha": "^6.2.0",
+    "mocha": "^10.2.0",
     "supertest": "^4.0.2"
   },
   "scripts": {
